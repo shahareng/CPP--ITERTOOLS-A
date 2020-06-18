@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+#include <vector>
+#include <iterator>
+
 namespace itertools
 {
 
@@ -23,14 +27,13 @@ namespace itertools
             class iterator
             {
             private:
-                // iterator begin, iterator end <or> accumulate&
                 const accumulate& ac;
                 decltype(temp.begin()) iter; // for pass over the container. type = (iterator)
-                // decltype(*(temp.begin())) valIter; // *iter. type = (*iterator)
                 typename std::decay<decltype(*(temp.begin()))>::type valIter;
+                // decltype(*(temp.begin())) valIter; // *iter. type = (*iterator)
 
             public:
-                iterator(const accumulate& a, decltype(temp.begin()) i) : ac(a), iter(i), valIter(*i) { }
+                iterator(const accumulate& a, decltype(temp.begin()) i) : ac(a), iter(i) { if (i != ac.temp.end()) valIter = *i;}
 
                 auto operator*() const
                 {

@@ -4,6 +4,9 @@ namespace itertools
 {
     class range
     {
+        int iBegin;
+        int iEnd;
+
         public:
             class iterator
             {
@@ -25,17 +28,17 @@ namespace itertools
                         return (*this);
                     }
 
-                    // iterator operator++(int) 
-                    // {
-                    //     iterator copy(*this);
-                    //     ++index;
-                    //     return copy;
-                    // }
+                    iterator operator++(int) 
+                    {
+                        iterator copy = *this;
+                        ++index;
+                        return copy;
+                    }
 
-                    // bool operator==(const iterator &other) const 
-                    // {
-                    //     return index == other.index; 
-                    // }
+                    bool operator==(const iterator &other) const 
+                    {
+                        return index == other.index; 
+                    }
 
                     bool operator!=(const iterator &other) const
                     {
@@ -53,10 +56,6 @@ namespace itertools
             iterator end() const
             {
                 return iEnd;
-            }
-            
-        private:
-            iterator iBegin;
-            iterator iEnd;
+            }            
     };
 };
