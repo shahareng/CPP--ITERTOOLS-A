@@ -35,7 +35,7 @@ namespace itertools
                 {
                     ++iter1;
                     ++iter2;
-                    while (com.temp1.begin() != com.temp1.end() && !(*iter2))
+                    while (iter1 != com.temp1.end() && !(*iter2))
                     {
                         ++iter1;
                         ++iter2;
@@ -49,7 +49,7 @@ namespace itertools
                     iterator copy = *this;
                     ++iter1;
                     ++iter2;
-                    while (com.temp1.begin() != com.temp1.end() && !(*iter2))
+                    while (iter1 != com.temp1.end() && !(*iter2))
                     {
                         iter1++;
                         iter2++;

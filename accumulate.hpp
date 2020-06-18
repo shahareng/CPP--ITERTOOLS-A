@@ -12,12 +12,12 @@ namespace itertools
         template <typename P>
         P operator()(P a, P b) const
         {
-            return a+b;
+            return a + b;
         }
     } plus;
 
 
-    template<typename T, typename F= plus>
+    template<typename T, typename F = plus>
     class accumulate
     {        
         const T& temp;
@@ -33,7 +33,7 @@ namespace itertools
                 // decltype(*(temp.begin())) valIter; // *iter. type = (*iterator)
 
             public:
-                iterator(const accumulate& a, decltype(temp.begin()) i) : ac(a), iter(i) { if (i != ac.temp.end()) valIter = *i;}
+                iterator(const accumulate& a, decltype(temp.begin()) i) : ac(a), iter(i) { if (i != ac.temp.end()) valIter = *i; }
 
                 auto operator*() const
                 {
@@ -44,7 +44,7 @@ namespace itertools
                 iterator &operator++()
                 {
                     ++iter;
-                    if (ac.temp.begin() != ac.temp.end())
+                    if (iter != ac.temp.end())
                     {
                         valIter = ac.func(valIter, *iter);
                     }
@@ -56,7 +56,7 @@ namespace itertools
                 {
                     iterator copy = *this;
                     iter++;
-                    if (ac.temp.begin() != ac.temp.end())
+                    if (iter != ac.temp.end())
                     {
                         valIter = ac.func(valIter, *iter);
                     }
