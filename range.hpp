@@ -5,56 +5,58 @@ namespace itertools
     class range
     {
         public:
-            class Iterator
+            class iterator
             {
                 friend class range;
+                private:
+                    int index;
+
                 public:
-                    Iterator(int i) { index = i; }
+                    iterator(int i) { index = i; }
 
                     int operator*() const
                     {
                         return index;
                     }
 
-                    Iterator& operator++()
+                    iterator& operator++()
                     {
                         ++index;
                         return (*this);
                     }
 
-                    Iterator operator++(int) 
-                    {
-                        Iterator copy(*this);
-                        ++index;
-                        return copy;
-                    }
+                    // iterator operator++(int) 
+                    // {
+                    //     iterator copy(*this);
+                    //     ++index;
+                    //     return copy;
+                    // }
 
-                    bool operator==(const Iterator &other) const 
-                    {
-                        return index == other.index; 
-                    }
+                    // bool operator==(const iterator &other) const 
+                    // {
+                    //     return index == other.index; 
+                    // }
 
-                    bool operator!=(const Iterator &other) const
+                    bool operator!=(const iterator &other) const
                     {
                         return index != other.index;
                     }
-                private:
-                    int index;
             };
 
             range(int a, int b) : iBegin(a), iEnd(b) {  }
 
-            Iterator begin() const
+            iterator begin() const
             {
                 return iBegin;
             }
 
-            Iterator end() const
+            iterator end() const
             {
                 return iEnd;
             }
+            
         private:
-            Iterator iBegin;
-            Iterator iEnd;
+            iterator iBegin;
+            iterator iEnd;
     };
 };

@@ -5,46 +5,72 @@ namespace itertools
     template<typename F, typename T>
     class filterfalse
     {
-        private:
-            T temp;
-            F filter;
-            
+        const T& temp;
+        const F& func;
+
         public:
-            class Iterator
+            class iterator
             {
             private:
-                Iterator iBegin;
-                Iterator iEnd;
-            
+                const filterfalse& ff;
+                decltype(temp.begin()) iter; // for pass over the container. type = (iterator)
+
             public:
-                Iterator(Iterator begin, Iterator end, F filter) : iBegin(begin), iEnd(end), filter(filter) {}
+                iterator(const filterfalse& f, decltype(temp.begin()) i) : ff(f), iter(i) { }
 
-                const T &operator*() const
+                auto operator*() const
                 {
-                    
+                    // while(ff.func(*iter))
+                    // {
+                    //     iter++;
+                    // }
+                    return *iter;
                 }
 
-                Iterator& operator++()
+                //++iBegin
+                iterator &operator++()
                 {
-                    
+                    ++iter;
+                    while (ff.temp.begin() != ff.temp.end() && ff.func(*iter))
+                    {
+                        ++iter;
+                    }
+                    return *this;
                 }
 
-                bool operator!=(const Iterator &other) const
+                //iBegin++
+                const iterator operator++(int) 
                 {
-                    
+                    iterator copy = *this;
+                    iter++;
+                    while (ff.temp.begin() != ff.temp.end() && ff.func(*iter))
+                    {
+                        iter++;
+                    }
+                    return copy;
+                }
+
+                bool operator==(const iterator &other) const 
+                {
+                    return iter == other.iter;
+                }
+
+                bool operator!=(const iterator &other) const
+                {
+                    return iter != other.iter;
                 }
             };
 
-            filterfalse(F lambda, T a) :  { } // struct, vector
+            filterfalse(const F& lambda, const T& a) : func(lambda), temp(a) { } // struct, vector
 
-            Iterator begin() const
+            iterator begin()
             {
-                return Iterator(temp.begin(), temp.end(), filter);
+                return iterator(*this, temp.begin());
             }
 
-            Iterator end() const
+            iterator end()
             {
-                return Iterator(temp.end(), temp.end(), filter);
-            } 
+                return iterator(*this, temp.end());
+            }
     };
 };

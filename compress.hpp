@@ -2,53 +2,82 @@
 
 namespace itertools
 {
-    template<typename T, typename R>
+    template<typename T1, typename T2>
     class compress
     {
+        const T1& temp1;
+        const T2& temp2;
+
         public:
-            class Iterator
+            class iterator
             {
-            public:
-                Iterator(){}
-
-                const T &operator*() const
-                {
-                    
-                }
-
-                Iterator& operator++()
-                {
-                    
-                }
-
-                bool operator!=(const Iterator &other) const
-                {
-                    
-                }
             private:
-                // const T *m_pCompress;
-                // int m_nIndex = -1;
+                // iterator begin, iterator end <or> accumulate&
+                const compress& com;
+                decltype(temp1.begin()) iter1; // for pass over the container. type = (iterator)
+                decltype(temp2.begin()) iter2; // for pass over the container. type = (iterator)
+
+            public:
+                iterator(const compress& a1, decltype(temp1.begin()) i1, decltype(temp2.begin()) i2) : com(a1), iter1(i1), iter2(i2) { }
+
+                auto operator*() const
+                {
+                //    while(!(*iter2))
+                //     {
+                //         iter1++;
+                //         iter2++;
+                //     }
+                    return *iter1;
+                }
+
+                //++iBegin
+                iterator &operator++()
+                {
+                    ++iter1;
+                    ++iter2;
+                    while (com.temp1.begin() != com.temp1.end() && !(*iter2))
+                    {
+                        ++iter1;
+                        ++iter2;
+                    }
+                    return *this;
+                }
+
+                //iBegin++
+                const iterator operator++(int) 
+                {
+                    iterator copy = *this;
+                    ++iter1;
+                    ++iter2;
+                    while (com.temp1.begin() != com.temp1.end() && !(*iter2))
+                    {
+                        iter1++;
+                        iter2++;
+                    }
+                    return copy;
+                }
+
+                bool operator==(const iterator &other) const 
+                {
+                    return iter1 == other.iter1;
+                }
+
+                bool operator!=(const iterator &other) const
+                {
+                    return iter1 != other.iter1;
+                }
             };
-        private:
-            // T *m_pData = nullptr;
-            // int m_nSize = 0;
-            // int m_nCapacity = 0;
 
-        public:
+            compress(const T1& a, const T2& b) : temp1(a), temp2(b) {  }
 
-            compress(T a, R b) // struct, vector
+            iterator begin() const
             {
-
+                return iterator(*this, temp1.begin(), temp2.begin());
             }
 
-            Iterator begin() const
+            iterator end() const
             {
-                
-            }
-
-            Iterator end() const
-            {
-                
+                return iterator(*this, temp1.end(), temp2.end());
             }
     };
 };

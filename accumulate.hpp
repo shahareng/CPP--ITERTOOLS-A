@@ -2,64 +2,94 @@
 
 namespace itertools
 {
-    template<typename T, typename F>
-    class accumulate
+
+    typedef struct 
     {
-        private:
-            T temp;
-            F filter;
-        
+        template <typename P>
+        P operator()(P a, P b) const
+        {
+            return a+b;
+        }
+    } plus;
+
+
+    template<typename T, typename F= plus>
+    class accumulate
+    {        
+        const T& temp;
+        const F& func;
+
         public:
-            class Iterator
+            class iterator
             {
             private:
-                Iterator iBegin;
-                Iterator iEnd;
-                
+                // iterator begin, iterator end <or> accumulate&
+                const accumulate& ac;
+                decltype(temp.begin()) iter; // for pass over the container. type = (iterator)
+                // decltype(*(temp.begin())) valIter; // *iter. type = (*iterator)
+                typename std::decay<decltype(*(temp.begin()))>::type valIter;
+
             public:
-                Iterator(Iterator begin, Iterator end, F filter) : iBegin(begin), iEnd(end), filter(filter) {}
+                iterator(const accumulate& a, decltype(temp.begin()) i) : ac(a), iter(i), valIter(*i) { }
 
-                T operator*() const
+                auto operator*() const
                 {
-                    return index;
+                   return valIter;
                 }
 
-                Iterator& operator++()
+                //++iBegin
+                iterator &operator++()
                 {
-                    ++index;
-                    return (*this);
+                    ++iter;
+                    if (ac.temp.begin() != ac.temp.end())
+                    {
+                        valIter = ac.func(valIter, *iter);
+                    }
+                    return *this;
                 }
 
-                Iterator operator++(int) 
+                //iBegin++
+                const iterator operator++(int) 
                 {
-                    Iterator copy(*this);
-                    ++index;
+                    iterator copy = *this;
+                    iter++;
+                    if (ac.temp.begin() != ac.temp.end())
+                    {
+                        valIter = ac.func(valIter, *iter);
+                    }
                     return copy;
                 }
 
-                bool operator==(const Iterator &other) const 
+                // iterator& operator=(const iterator& other)
+                // {
+                //     if (valIter != other.valIter)
+                //     {
+                //         this->valIter = other.valIter;
+                //     }
+                //     return *this;
+                // }
+
+                bool operator==(const iterator &other) const 
                 {
-                    return index == other.index; 
+                    return iter == other.iter;
                 }
 
-                bool operator!=(const Iterator &other) const
+                bool operator!=(const iterator &other) const
                 {
-                    return index != other.index;
+                    return iter != other.iter;
                 }
             };
-
-            accumulate(T a) :  { } // range/vector
             
-            accumulate(T a, F lambda) :  { } // range/vector, lambda
+            accumulate(const T& a, const F& lambda = plus()) : temp(a), func(lambda) { }
 
-            Iterator begin() const
+            iterator begin() const
             {
-                return Iterator(temp.begin(), temp.end(), filter);
+                return iterator(*this, temp.begin());
             }
 
-            Iterator end() const
+            iterator end() const
             {
-                return Iterator(temp.end(), temp.end(), filter);
+                return iterator(*this, temp.end());
             }
     };
 };
